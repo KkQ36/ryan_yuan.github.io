@@ -1,9 +1,8 @@
 ---
-title: Chinese Test
-description: 这是一个副标题
+title: AOP 核心概念
 date: 2020-09-09
 slug: test-chinese
-image: helena-hertz-wWZzXlDpMog-unsplash.jpg
+image: the-creative-exchange-d2zvqp3fpro-unsplash.jpg
 categories:
     - aop
 ---
