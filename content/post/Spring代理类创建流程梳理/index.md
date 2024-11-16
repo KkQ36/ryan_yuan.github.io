@@ -190,7 +190,7 @@ beanDefinitionNames = {ArrayList@1626}  size = 6
  5 = "org.springframework.aop.aspectj.AspectJPointcutAdvisor#1"
 ```
 
-![图片](./代理Bean.png)
+![图片](代理Bean.png)
 
 除了这些 infrastructure，上面还有一个 **名称** 为`org.springframework.aop.config.internalAutoProxyCreator` 的 Bean。
 这个 Bean 的**实际类型**是：`org.springframework.aop.framework.autoproxy.AbstractAdvisorAutoProxyCreator`，它是一个 `InstantiationAwareBeanPostProcessor`，`AbstractAdvisorAutoProxyCreator` 类实现了下面这个方法：

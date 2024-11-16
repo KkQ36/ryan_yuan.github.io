@@ -347,14 +347,18 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; 5 = &amp;#34;org.springframework.aop.aspectj.AspectJPointcutAdvisor#1&amp;#34;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;http://localhost:1313/%e4%bb%a3%e7%90%86Bean.png&#34;
-	
-	
-	
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;http://localhost:1313/p/spring-%E4%BB%A3%E7%90%86%E7%B1%BB%E5%88%9B%E5%BB%BA%E6%B5%81%E7%A8%8B%E6%A2%B3%E7%90%86/%E4%BB%A3%E7%90%86Bean.png&#34;
+	width=&#34;861&#34;
+	height=&#34;320&#34;
+	srcset=&#34;http://localhost:1313/p/spring-%E4%BB%A3%E7%90%86%E7%B1%BB%E5%88%9B%E5%BB%BA%E6%B5%81%E7%A8%8B%E6%A2%B3%E7%90%86/%E4%BB%A3%E7%90%86Bean_hu3128722343249050419.png 480w, http://localhost:1313/p/spring-%E4%BB%A3%E7%90%86%E7%B1%BB%E5%88%9B%E5%BB%BA%E6%B5%81%E7%A8%8B%E6%A2%B3%E7%90%86/%E4%BB%A3%E7%90%86Bean_hu14265844058745978372.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;图片&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;269&#34;
+		data-flex-basis=&#34;645px&#34;
 	
 &gt;&lt;/p&gt;
 &lt;p&gt;除了这些 infrastructure，上面还有一个 &lt;strong&gt;名称&lt;/strong&gt; 为&lt;code&gt;org.springframework.aop.config.internalAutoProxyCreator&lt;/code&gt; 的 Bean。
