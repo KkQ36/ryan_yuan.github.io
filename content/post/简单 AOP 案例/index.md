@@ -2,7 +2,7 @@
 title: 实现一个简单的 AOP 切面
 date: 2024-11-12
 slug: test-chinese
-image: the-creative-exchange-d2zvqp3fpro-unsplash.jpg
+image: pawel-czerwinski-8uZPynIu-rQ-unsplash.jpg
 categories:
     - SpringAOP源码解析
 ---
