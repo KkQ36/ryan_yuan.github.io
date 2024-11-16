@@ -1,6 +1,7 @@
 baseurl: https://example.com/
 languageCode: zh-cn
 title: Example Site
+theme: hugo-theme-stack
 copyright: Ryan_Yuan
 
 # 默认语言
