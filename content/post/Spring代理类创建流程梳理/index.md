@@ -212,7 +212,7 @@ default Object postProcessBeforeInstantiation(Class<?> beanClass, String beanNam
 ```java
 org.springframework.context.support.AbstractApplicationContext#refresh()
 => org.springframework.context.support.AbstractApplicationContext#registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory)
-=>org.springframework.context.support.PostProcessorRegistrationDelegate#registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory, AbstractApplicationContext applicationContext)
+=> org.springframework.context.support.PostProcessorRegistrationDelegate#registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory, AbstractApplicationContext applicationContext)
 ```
 
 
