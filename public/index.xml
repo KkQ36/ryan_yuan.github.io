@@ -223,7 +223,7 @@
 &lt;li&gt;测试类，这里使用切点表达式匹配 &lt;code&gt;UserService&lt;/code&gt; 类中的 &lt;code&gt;queryUserName&lt;/code&gt; 方法&lt;/li&gt;
 &lt;li&gt;输出案例中，也只有这个方法会被代理&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;输出结果&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;输出结果&lt;/strong&gt;&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
 &lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
