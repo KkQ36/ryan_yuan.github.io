@@ -32,8 +32,8 @@
 &lt;/ul&gt;
 &lt;p&gt;动态代理可以让我们自由的在方法执行前后插入自己的逻辑，这就解决了通知在何处执行的问题；&lt;/p&gt;
 &lt;p&gt;但是动态代理（无论是 JDKProxy 的 &lt;code&gt;invoke()&lt;/code&gt; 还是 CgLib 的 &lt;code&gt;interctpt()&lt;/code&gt;）都是在被代理的类中的&lt;strong&gt;任何方法&lt;/strong&gt;执行前执行的，所以判断该方法是否需要执行切点逻辑需要我们来实现。&lt;/p&gt;
-&lt;p&gt;![[【spring-aop】实现一个简单的 AOP 切面 架构图.png|800]]
-上面展示的是一个代理类处理 AOP 的逻辑，其中 &lt;code&gt;MethodInterceptor&lt;/code&gt; 是方法执行前的一个拦截器；&lt;code&gt;MethodMatcher&lt;/code&gt; 是一个方法匹配器，通过它来判断接下来要执行的方法之前是否需要处理代理逻辑；
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;./AOP%e6%a1%88%e4%be%8b.png&#34; &gt;图例&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;上面展示的是一个代理类处理 AOP 的逻辑，其中 &lt;code&gt;MethodInterceptor&lt;/code&gt; 是方法执行前的一个拦截器；&lt;code&gt;MethodMatcher&lt;/code&gt; 是一个方法匹配器，通过它来判断接下来要执行的方法之前是否需要处理代理逻辑；
 如果被代理的方法符合切点表达式，则按照顺序执行定义的代理逻辑，这样一个简单的 AOP 逻辑就打通了。&lt;/p&gt;
 &lt;h1 id=&#34;案例&#34;&gt;案例
 &lt;/h1&gt;&lt;h2 id=&#34;案例准备&#34;&gt;案例准备
