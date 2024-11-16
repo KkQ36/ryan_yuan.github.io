@@ -223,17 +223,25 @@ default Object postProcessBeforeInstantiation(Class<?> beanClass, String beanNam
 
 我们依然从 `refresh()` 方法开始：
 `org.springframework.context.support.AbstractApplicationContext#refresh()`
+
 =>`org.springframework.context.support.AbstractApplicationContext#finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory)`
+
 => `org.springframework.beans.factory.support.DefaultListableBeanFactory#preInstantiateSingletons()`
+
 在预先实例化单例 Bean 的方法中，会对所有的 Bean 执行 `getBean()` 方法，`getBean()` 方法如果发现 Bean 没有被加载或者为原型 Bean，将会触发 Bean 的加载。
 
 => `org.springframework.beans.factory.support.AbstractBeanFactory.getBean(String name)`
+
 => `org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(String name, @Nullable Class<T> requiredType, @Nullable Object[] args, boolean typeCheckOnly)`
+
 => `org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#createBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)`
+
 Bean 的 `createBean()` 方法实际上是延迟调用的，后续在 spring 三级缓存中会具体讲解，这里我们可以视为直接调用了 `createBean()` 方法
 
 => `org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#resolveBeforeInstantiation(String beanName, RootBeanDefinition mbd)`
+
 => `org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#applyBeanPostProcessorsBeforeInstantiation(Class<?> beanClass, String beanName)`
+
 这里就是具体执行 `BeanPostProcessor` 的位置：
 ```java
 protected Object applyBeanPostProcessorsBeforeInstantiation(Class<?> beanClass, String beanName) {  
@@ -324,11 +332,15 @@ public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName
 ## 创建代理类
 从 `createBean()` 方法开始，我们再来看一下代理类具体是怎么创建的：
 `org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#createBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)`
+
 => `org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#doCreateBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)`
+
 `doCreateBean` 就是实际上创建 Bean 的方法，当 Bean 被实例化完成之后，会执行 Bean 的初始化，当其初始化结束之后，就会执行 `AbstractAdvisorAutoProxyCreator` 实现的另一个重要方法，代理类的构建就是在这里完成的。
 
 => `org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#initializeBean(String beanName, Object bean, @Nullable RootBeanDefinition mbd)`
+
 => `org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName)`
+
 这个方法会执行所有的 `BeanPostProcessor` 的 `postProcessAfterInitialization()` 方法，`AbstractAdvisorAutoProxyCreator` 中的这个方法就是在这里执行的：
 ```java
 @Override  

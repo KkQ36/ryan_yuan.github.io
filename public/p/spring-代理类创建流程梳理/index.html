@@ -679,17 +679,17 @@
 所以在所有的 Bean 实例化之前，需要确保这些构建 AOP 的 infrastructure 被提前构建好，这就是 <code>AbstractAdvisorAutoProxyCreator</code> 在 Bean 初始化之前执行的逻辑。</li>
 </ul>
 <p>我们依然从 <code>refresh()</code> 方法开始：
-<code>org.springframework.context.support.AbstractApplicationContext#refresh()</code>
-=&gt;<code>org.springframework.context.support.AbstractApplicationContext#finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory)</code>
-=&gt; <code>org.springframework.beans.factory.support.DefaultListableBeanFactory#preInstantiateSingletons()</code>
-在预先实例化单例 Bean 的方法中，会对所有的 Bean 执行 <code>getBean()</code> 方法，<code>getBean()</code> 方法如果发现 Bean 没有被加载或者为原型 Bean，将会触发 Bean 的加载。</p>
-<p>=&gt; <code>org.springframework.beans.factory.support.AbstractBeanFactory.getBean(String name)</code>
-=&gt; <code>org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(String name, @Nullable Class&lt;T&gt; requiredType, @Nullable Object[] args, boolean typeCheckOnly)</code>
-=&gt; <code>org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#createBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)</code>
-Bean 的 <code>createBean()</code> 方法实际上是延迟调用的，后续在 spring 三级缓存中会具体讲解，这里我们可以视为直接调用了 <code>createBean()</code> 方法</p>
-<p>=&gt; <code>org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#resolveBeforeInstantiation(String beanName, RootBeanDefinition mbd)</code>
-=&gt; <code>org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#applyBeanPostProcessorsBeforeInstantiation(Class&lt;?&gt; beanClass, String beanName)</code>
-这里就是具体执行 <code>BeanPostProcessor</code> 的位置：</p>
+<code>org.springframework.context.support.AbstractApplicationContext#refresh()</code></p>
+<p>=&gt;<code>org.springframework.context.support.AbstractApplicationContext#finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory)</code></p>
+<p>=&gt; <code>org.springframework.beans.factory.support.DefaultListableBeanFactory#preInstantiateSingletons()</code></p>
+<p>在预先实例化单例 Bean 的方法中，会对所有的 Bean 执行 <code>getBean()</code> 方法，<code>getBean()</code> 方法如果发现 Bean 没有被加载或者为原型 Bean，将会触发 Bean 的加载。</p>
+<p>=&gt; <code>org.springframework.beans.factory.support.AbstractBeanFactory.getBean(String name)</code></p>
+<p>=&gt; <code>org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(String name, @Nullable Class&lt;T&gt; requiredType, @Nullable Object[] args, boolean typeCheckOnly)</code></p>
+<p>=&gt; <code>org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#createBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)</code></p>
+<p>Bean 的 <code>createBean()</code> 方法实际上是延迟调用的，后续在 spring 三级缓存中会具体讲解，这里我们可以视为直接调用了 <code>createBean()</code> 方法</p>
+<p>=&gt; <code>org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#resolveBeforeInstantiation(String beanName, RootBeanDefinition mbd)</code></p>
+<p>=&gt; <code>org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#applyBeanPostProcessorsBeforeInstantiation(Class&lt;?&gt; beanClass, String beanName)</code></p>
+<p>这里就是具体执行 <code>BeanPostProcessor</code> 的位置：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -860,12 +860,12 @@ Bean 的 <code>createBean()</code> 方法实际上是延迟调用的，后续在
 对于没有指定 <code>targetSource</code> 的 Bean，<code>AbstractAdvisorAutoProxyCreator</code> 不会对其进行任何操作，而是只进行了 Advisor 的初始化。</p>
 <h2 id="创建代理类">创建代理类
 </h2><p>从 <code>createBean()</code> 方法开始，我们再来看一下代理类具体是怎么创建的：
-<code>org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#createBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)</code>
-=&gt; <code>org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#doCreateBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)</code>
-<code>doCreateBean</code> 就是实际上创建 Bean 的方法，当 Bean 被实例化完成之后，会执行 Bean 的初始化，当其初始化结束之后，就会执行 <code>AbstractAdvisorAutoProxyCreator</code> 实现的另一个重要方法，代理类的构建就是在这里完成的。</p>
-<p>=&gt; <code>org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#initializeBean(String beanName, Object bean, @Nullable RootBeanDefinition mbd)</code>
-=&gt; <code>org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName)</code>
-这个方法会执行所有的 <code>BeanPostProcessor</code> 的 <code>postProcessAfterInitialization()</code> 方法，<code>AbstractAdvisorAutoProxyCreator</code> 中的这个方法就是在这里执行的：</p>
+<code>org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#createBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)</code></p>
+<p>=&gt; <code>org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#doCreateBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)</code></p>
+<p><code>doCreateBean</code> 就是实际上创建 Bean 的方法，当 Bean 被实例化完成之后，会执行 Bean 的初始化，当其初始化结束之后，就会执行 <code>AbstractAdvisorAutoProxyCreator</code> 实现的另一个重要方法，代理类的构建就是在这里完成的。</p>
+<p>=&gt; <code>org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#initializeBean(String beanName, Object bean, @Nullable RootBeanDefinition mbd)</code></p>
+<p>=&gt; <code>org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName)</code></p>
+<p>这个方法会执行所有的 <code>BeanPostProcessor</code> 的 <code>postProcessAfterInitialization()</code> 方法，<code>AbstractAdvisorAutoProxyCreator</code> 中的这个方法就是在这里执行的：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
