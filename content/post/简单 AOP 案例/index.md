@@ -1,7 +1,7 @@
 ---
+author: Ryan Yuan
 title: 实现一个简单的 AOP 切面
 date: 2024-11-12
-slug: test-chinese
 image: pawel-czerwinski-8uZPynIu-rQ-unsplash.jpg
 categories:
     - SpringAOP源码解析
@@ -22,10 +22,8 @@ AOP 执行过程可以简单理解为对 切点(JointPoint) 执行 通知(Advice
 
 但是动态代理（无论是 JDKProxy 的 `invoke()` 还是 CgLib 的 `interctpt()`）都是在被代理的类中的**任何方法**执行前执行的，所以判断该方法是否需要执行切点逻辑需要我们来实现。
 
-![架构图](./实现一个简单的AOP切面架构图.png)
-
+![[【spring-aop】实现一个简单的 AOP 切面 架构图.png|800]]
 上面展示的是一个代理类处理 AOP 的逻辑，其中 `MethodInterceptor` 是方法执行前的一个拦截器；`MethodMatcher` 是一个方法匹配器，通过它来判断接下来要执行的方法之前是否需要处理代理逻辑；
-
 如果被代理的方法符合切点表达式，则按照顺序执行定义的代理逻辑，这样一个简单的 AOP 逻辑就打通了。
 
 # 案例
