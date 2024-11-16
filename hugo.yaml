@@ -163,8 +163,6 @@ params:
             - type: tag-cloud
               params:
                   limit: 10
-        page:
-            - type: toc
 
     opengraph:
         twitter:
