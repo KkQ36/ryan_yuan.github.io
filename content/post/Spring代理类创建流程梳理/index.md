@@ -152,13 +152,15 @@ public void refresh() throws BeansException, IllegalStateException {
 }
 ```
 其中 `obtainFreshBeanFactory` 会执行 Bean 工厂的初始化，其中最重要的部分就是将 XML 配置文件中的 Bean 定义（Bean Definition）加载到 Bean 工厂中。
-
-`org.springframework.context.support.AbstractApplicationContext#refresh()`
-=> `org.springframework.context.support.AbstractRefreshableApplicationContext#refreshBeanFactory()`
-=> `org.springframework.context.support.AbstractXmlApplicationContext#loadBeanDefinitions(DefaultListableBeanFactory beanFactory)`
+```java
+org.springframework.context.support.AbstractApplicationContext#refresh()
+=> org.springframework.context.support.AbstractRefreshableApplicationContext#refreshBeanFactory()
+=> org.springframework.context.support.AbstractXmlApplicationContext#loadBeanDefinitions(DefaultListableBeanFactory beanFactory)
 上面的是从 `refresh()` 方法到具体加载 Bean Definition 方法的调用链路。
 
-`org.springframework.context.support.AbstractXmlApplicationContext#loadBeanDefinitions(DefaultListableBeanFactory beanFactory)`
+org.springframework.context.support.AbstractXmlApplicationContext#loadBeanDefinitions(DefaultListableBeanFactory beanFactory)
+```
+
 ```java
 @Override  
 protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws BeansException, IOException {  
@@ -207,9 +209,12 @@ default Object postProcessBeforeInstantiation(Class<?> beanClass, String beanNam
 上面提到，`org.springframework.aop.config.internalAutoProxyCreator` 是一个 `BeanPostProcessor`，那它具体创建并注册的位置就是：
 `org.springframework.context.support#registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory)`
 调用这个方法的位置还是 `ApplicationContext` 的 `refresh()` 方法，具体的调用链路为：
-`org.springframework.context.support.AbstractApplicationContext#refresh()`
-=> `org.springframework.context.support.AbstractApplicationContext#registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory)`
-=> `org.springframework.context.support.PostProcessorRegistrationDelegate#registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory, AbstractApplicationContext applicationContext)`
+```java
+org.springframework.context.support.AbstractApplicationContext#refresh()
+=> org.springframework.context.support.AbstractApplicationContext#registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory)
+=>org.springframework.context.support.PostProcessorRegistrationDelegate#registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory, AbstractApplicationContext applicationContext)
+```
+
 
 具体就是将 `BeanPostProcessor` 加载到工厂中，方便后续的调用。
 具体存放 `BeanPostProcessor` 的位置为：`org.springframework.beans.factory.support.AbstractBeanFactory` 的 `beanPostProcessors` 属性。
@@ -222,25 +227,20 @@ default Object postProcessBeforeInstantiation(Class<?> beanClass, String beanNam
 所以在所有的 Bean 实例化之前，需要确保这些构建 AOP 的 infrastructure 被提前构建好，这就是 `AbstractAdvisorAutoProxyCreator` 在 Bean 初始化之前执行的逻辑。
 
 我们依然从 `refresh()` 方法开始：
-`org.springframework.context.support.AbstractApplicationContext#refresh()`
-
-=>`org.springframework.context.support.AbstractApplicationContext#finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory)`
-
-=> `org.springframework.beans.factory.support.DefaultListableBeanFactory#preInstantiateSingletons()`
-
+```java
+org.springframework.context.support.AbstractApplicationContext#refresh()
+=> org.springframework.context.support.AbstractApplicationContext#finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory)
+=> org.springframework.beans.factory.support.DefaultListableBeanFactory#preInstantiateSingletons()
 在预先实例化单例 Bean 的方法中，会对所有的 Bean 执行 `getBean()` 方法，`getBean()` 方法如果发现 Bean 没有被加载或者为原型 Bean，将会触发 Bean 的加载。
 
-=> `org.springframework.beans.factory.support.AbstractBeanFactory.getBean(String name)`
+=> org.springframework.beans.factory.support.AbstractBeanFactory.getBean(String name)
+=> org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(String name, @Nullable Class<T> requiredType, @Nullable Object[] args, boolean typeCheckOnly)
+=> org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#createBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)
+Bean 的 `createBean()` 方法实际上是延迟调用的，后续在 spring 三级缓存中会具体讲解，这里我们可以视为直接调用了 `createBean() 方法
 
-=> `org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(String name, @Nullable Class<T> requiredType, @Nullable Object[] args, boolean typeCheckOnly)`
-
-=> `org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#createBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)`
-
-Bean 的 `createBean()` 方法实际上是延迟调用的，后续在 spring 三级缓存中会具体讲解，这里我们可以视为直接调用了 `createBean()` 方法
-
-=> `org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#resolveBeforeInstantiation(String beanName, RootBeanDefinition mbd)`
-
-=> `org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#applyBeanPostProcessorsBeforeInstantiation(Class<?> beanClass, String beanName)`
+=> org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#resolveBeforeInstantiation(String beanName, RootBeanDefinition mbd)
+=> org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#applyBeanPostProcessorsBeforeInstantiation(Class<?> beanClass, String beanName)
+```
 
 这里就是具体执行 `BeanPostProcessor` 的位置：
 ```java
@@ -288,9 +288,12 @@ public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName
 }
 ```
 在上面的 `shouldSkip()` 方法中，会尝试去获取所有的 Advisor，未创建的话，则会去尝试创建这些 `Advisor`。
-`org.springframework.aop.framework.autoproxy.AbstractAutoProxyCreator#shouldSkip(Class<?> beanClass, String beanName)`
-=> `org.springframework.aop.framework.autoproxy.AspectJAwareAdvisorAutoProxyCreator#findCandidateAdvisors()`
-=> `org.springframework.aop.framework.autoproxy.BeanFactoryAdvisorRetrievalHelper#findAdvisorBeans()`
+```java
+org.springframework.aop.framework.autoproxy.AbstractAutoProxyCreator#shouldSkip(Class<?> beanClass, String beanName)
+=> org.springframework.aop.framework.autoproxy.AspectJAwareAdvisorAutoProxyCreator#findCandidateAdvisors()
+=> org.springframework.aop.framework.autoproxy.BeanFactoryAdvisorRetrievalHelper#findAdvisorBeans()
+```
+
 ```java
 	public List<Advisor> findAdvisorBeans() {
 		// 获取 advisorNames
@@ -331,17 +334,17 @@ public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName
 对于没有指定 `targetSource` 的 Bean，`AbstractAdvisorAutoProxyCreator` 不会对其进行任何操作，而是只进行了 Advisor 的初始化。
 ## 创建代理类
 从 `createBean()` 方法开始，我们再来看一下代理类具体是怎么创建的：
-`org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#createBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)`
 
-=> `org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#doCreateBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)`
+```java
+org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#createBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)
+=> org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#doCreateBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)
+doCreateBean 就是实际上创建 Bean 的方法，当 Bean 被实例化完成之后，会执行 Bean 的初始化，当其初始化结束之后，就会执行 AbstractAdvisorAutoProxyCreator 实现的另一个重要方法，代理类的构建就是在这里完成的。
 
-`doCreateBean` 就是实际上创建 Bean 的方法，当 Bean 被实例化完成之后，会执行 Bean 的初始化，当其初始化结束之后，就会执行 `AbstractAdvisorAutoProxyCreator` 实现的另一个重要方法，代理类的构建就是在这里完成的。
+=> `org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#initializeBean(String beanName, Object bean, @Nullable RootBeanDefinition mbd)
+=> `org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName)
+```
 
-=> `org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#initializeBean(String beanName, Object bean, @Nullable RootBeanDefinition mbd)`
-
-=> `org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName)`
-
-这个方法会执行所有的 `BeanPostProcessor` 的 `postProcessAfterInitialization()` 方法，`AbstractAdvisorAutoProxyCreator` 中的这个方法就是在这里执行的：
+这个方法会执行所有的 BeanPostProcessor 的 postProcessAfterInitialization() 方法，AbstractAdvisorAutoProxyCreator 中的这个方法就是在这里执行的：
 ```java
 @Override  
 public Object postProcessAfterInitialization(@Nullable Object bean, String beanName) {  

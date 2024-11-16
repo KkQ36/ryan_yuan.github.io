@@ -566,12 +566,25 @@
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>其中 <code>obtainFreshBeanFactory</code> 会执行 Bean 工厂的初始化，其中最重要的部分就是将 XML 配置文件中的 Bean 定义（Bean Definition）加载到 Bean 工厂中。</p>
-<p><code>org.springframework.context.support.AbstractApplicationContext#refresh()</code>
-=&gt; <code>org.springframework.context.support.AbstractRefreshableApplicationContext#refreshBeanFactory()</code>
-=&gt; <code>org.springframework.context.support.AbstractXmlApplicationContext#loadBeanDefinitions(DefaultListableBeanFactory beanFactory)</code>
-上面的是从 <code>refresh()</code> 方法到具体加载 Bean Definition 方法的调用链路。</p>
-<p><code>org.springframework.context.support.AbstractXmlApplicationContext#loadBeanDefinitions(DefaultListableBeanFactory beanFactory)</code></p>
 <div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">org</span><span class="p">.</span><span class="na">springframework</span><span class="p">.</span><span class="na">context</span><span class="p">.</span><span class="na">support</span><span class="p">.</span><span class="na">AbstractApplicationContext</span><span class="err">#</span><span class="n">refresh</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">=&gt;</span><span class="w"> </span><span class="n">org</span><span class="p">.</span><span class="na">springframework</span><span class="p">.</span><span class="na">context</span><span class="p">.</span><span class="na">support</span><span class="p">.</span><span class="na">AbstractRefreshableApplicationContext</span><span class="err">#</span><span class="n">refreshBeanFactory</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">=&gt;</span><span class="w"> </span><span class="n">org</span><span class="p">.</span><span class="na">springframework</span><span class="p">.</span><span class="na">context</span><span class="p">.</span><span class="na">support</span><span class="p">.</span><span class="na">AbstractXmlApplicationContext</span><span class="err">#</span><span class="n">loadBeanDefinitions</span><span class="p">(</span><span class="n">DefaultListableBeanFactory</span><span class="w"> </span><span class="n">beanFactory</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">上面的是从</span><span class="w"> </span><span class="err">`</span><span class="n">refresh</span><span class="p">()</span><span class="err">`</span><span class="w"> </span><span class="n">方法到具体加载</span><span class="w"> </span><span class="n">Bean</span><span class="w"> </span><span class="n">Definition</span><span class="w"> </span><span class="n">方法的调用链路</span><span class="err">。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">org</span><span class="p">.</span><span class="na">springframework</span><span class="p">.</span><span class="na">context</span><span class="p">.</span><span class="na">support</span><span class="p">.</span><span class="na">AbstractXmlApplicationContext</span><span class="err">#</span><span class="n">loadBeanDefinitions</span><span class="p">(</span><span class="n">DefaultListableBeanFactory</span><span class="w"> </span><span class="n">beanFactory</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
@@ -664,11 +677,20 @@
 <h2 id="加载-creator">加载 Creator
 </h2><p>上面提到，<code>org.springframework.aop.config.internalAutoProxyCreator</code> 是一个 <code>BeanPostProcessor</code>，那它具体创建并注册的位置就是：
 <code>org.springframework.context.support#registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory)</code>
-调用这个方法的位置还是 <code>ApplicationContext</code> 的 <code>refresh()</code> 方法，具体的调用链路为：
-<code>org.springframework.context.support.AbstractApplicationContext#refresh()</code>
-=&gt; <code>org.springframework.context.support.AbstractApplicationContext#registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory)</code>
-=&gt; <code>org.springframework.context.support.PostProcessorRegistrationDelegate#registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory, AbstractApplicationContext applicationContext)</code></p>
-<p>具体就是将 <code>BeanPostProcessor</code> 加载到工厂中，方便后续的调用。
+调用这个方法的位置还是 <code>ApplicationContext</code> 的 <code>refresh()</code> 方法，具体的调用链路为：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">org</span><span class="p">.</span><span class="na">springframework</span><span class="p">.</span><span class="na">context</span><span class="p">.</span><span class="na">support</span><span class="p">.</span><span class="na">AbstractApplicationContext</span><span class="err">#</span><span class="n">refresh</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">=&gt;</span><span class="w"> </span><span class="n">org</span><span class="p">.</span><span class="na">springframework</span><span class="p">.</span><span class="na">context</span><span class="p">.</span><span class="na">support</span><span class="p">.</span><span class="na">AbstractApplicationContext</span><span class="err">#</span><span class="n">registerBeanPostProcessors</span><span class="p">(</span><span class="n">ConfigurableListableBeanFactory</span><span class="w"> </span><span class="n">beanFactory</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">=&gt;</span><span class="n">org</span><span class="p">.</span><span class="na">springframework</span><span class="p">.</span><span class="na">context</span><span class="p">.</span><span class="na">support</span><span class="p">.</span><span class="na">PostProcessorRegistrationDelegate</span><span class="err">#</span><span class="n">registerBeanPostProcessors</span><span class="p">(</span><span class="n">ConfigurableListableBeanFactory</span><span class="w"> </span><span class="n">beanFactory</span><span class="p">,</span><span class="w"> </span><span class="n">AbstractApplicationContext</span><span class="w"> </span><span class="n">applicationContext</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>具体就是将 <code>BeanPostProcessor</code> 加载到工厂中，方便后续的调用。
 具体存放 <code>BeanPostProcessor</code> 的位置为：<code>org.springframework.beans.factory.support.AbstractBeanFactory</code> 的 <code>beanPostProcessors</code> 属性。</p>
 <h2 id="加载-advisors">加载 Advisors
 </h2><ul>
@@ -678,18 +700,38 @@
 而如果按照我们在 xml 中配置的方式，显然先构建的 Bean 将会是 <code>userService</code>。
 所以在所有的 Bean 实例化之前，需要确保这些构建 AOP 的 infrastructure 被提前构建好，这就是 <code>AbstractAdvisorAutoProxyCreator</code> 在 Bean 初始化之前执行的逻辑。</li>
 </ul>
-<p>我们依然从 <code>refresh()</code> 方法开始：
-<code>org.springframework.context.support.AbstractApplicationContext#refresh()</code></p>
-<p>=&gt;<code>org.springframework.context.support.AbstractApplicationContext#finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory)</code></p>
-<p>=&gt; <code>org.springframework.beans.factory.support.DefaultListableBeanFactory#preInstantiateSingletons()</code></p>
-<p>在预先实例化单例 Bean 的方法中，会对所有的 Bean 执行 <code>getBean()</code> 方法，<code>getBean()</code> 方法如果发现 Bean 没有被加载或者为原型 Bean，将会触发 Bean 的加载。</p>
-<p>=&gt; <code>org.springframework.beans.factory.support.AbstractBeanFactory.getBean(String name)</code></p>
-<p>=&gt; <code>org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(String name, @Nullable Class&lt;T&gt; requiredType, @Nullable Object[] args, boolean typeCheckOnly)</code></p>
-<p>=&gt; <code>org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#createBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)</code></p>
-<p>Bean 的 <code>createBean()</code> 方法实际上是延迟调用的，后续在 spring 三级缓存中会具体讲解，这里我们可以视为直接调用了 <code>createBean()</code> 方法</p>
-<p>=&gt; <code>org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#resolveBeforeInstantiation(String beanName, RootBeanDefinition mbd)</code></p>
-<p>=&gt; <code>org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#applyBeanPostProcessorsBeforeInstantiation(Class&lt;?&gt; beanClass, String beanName)</code></p>
-<p>这里就是具体执行 <code>BeanPostProcessor</code> 的位置：</p>
+<p>我们依然从 <code>refresh()</code> 方法开始：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">org</span><span class="p">.</span><span class="na">springframework</span><span class="p">.</span><span class="na">context</span><span class="p">.</span><span class="na">support</span><span class="p">.</span><span class="na">AbstractApplicationContext</span><span class="err">#</span><span class="n">refresh</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">=&gt;</span><span class="w"> </span><span class="n">org</span><span class="p">.</span><span class="na">springframework</span><span class="p">.</span><span class="na">context</span><span class="p">.</span><span class="na">support</span><span class="p">.</span><span class="na">AbstractApplicationContext</span><span class="err">#</span><span class="n">finishBeanFactoryInitialization</span><span class="p">(</span><span class="n">ConfigurableListableBeanFactory</span><span class="w"> </span><span class="n">beanFactory</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">=&gt;</span><span class="w"> </span><span class="n">org</span><span class="p">.</span><span class="na">springframework</span><span class="p">.</span><span class="na">beans</span><span class="p">.</span><span class="na">factory</span><span class="p">.</span><span class="na">support</span><span class="p">.</span><span class="na">DefaultListableBeanFactory</span><span class="err">#</span><span class="n">preInstantiateSingletons</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">在预先实例化单例</span><span class="w"> </span><span class="n">Bean</span><span class="w"> </span><span class="n">的方法中</span><span class="err">，</span><span class="n">会对所有的</span><span class="w"> </span><span class="n">Bean</span><span class="w"> </span><span class="n">执行</span><span class="w"> </span><span class="err">`</span><span class="n">getBean</span><span class="p">()</span><span class="err">`</span><span class="w"> </span><span class="n">方法</span><span class="err">，`</span><span class="n">getBean</span><span class="p">()</span><span class="err">`</span><span class="w"> </span><span class="n">方法如果发现</span><span class="w"> </span><span class="n">Bean</span><span class="w"> </span><span class="n">没有被加载或者为原型</span><span class="w"> </span><span class="n">Bean</span><span class="err">，</span><span class="n">将会触发</span><span class="w"> </span><span class="n">Bean</span><span class="w"> </span><span class="n">的加载</span><span class="err">。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">=&gt;</span><span class="w"> </span><span class="n">org</span><span class="p">.</span><span class="na">springframework</span><span class="p">.</span><span class="na">beans</span><span class="p">.</span><span class="na">factory</span><span class="p">.</span><span class="na">support</span><span class="p">.</span><span class="na">AbstractBeanFactory</span><span class="p">.</span><span class="na">getBean</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">=&gt;</span><span class="w"> </span><span class="n">org</span><span class="p">.</span><span class="na">springframework</span><span class="p">.</span><span class="na">beans</span><span class="p">.</span><span class="na">factory</span><span class="p">.</span><span class="na">support</span><span class="p">.</span><span class="na">AbstractBeanFactory</span><span class="p">.</span><span class="na">doGetBean</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="nd">@Nullable</span><span class="w"> </span><span class="n">Class</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">requiredType</span><span class="p">,</span><span class="w"> </span><span class="nd">@Nullable</span><span class="w"> </span><span class="n">Object</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">,</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="n">typeCheckOnly</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">=&gt;</span><span class="w"> </span><span class="n">org</span><span class="p">.</span><span class="na">springframework</span><span class="p">.</span><span class="na">beans</span><span class="p">.</span><span class="na">factory</span><span class="p">.</span><span class="na">support</span><span class="p">.</span><span class="na">AbstractAutowireCapableBeanFactory</span><span class="err">#</span><span class="n">createBean</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">beanName</span><span class="p">,</span><span class="w"> </span><span class="n">RootBeanDefinition</span><span class="w"> </span><span class="n">mbd</span><span class="p">,</span><span class="w"> </span><span class="nd">@Nullable</span><span class="w"> </span><span class="n">Object</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Bean</span><span class="w"> </span><span class="n">的</span><span class="w"> </span><span class="err">`</span><span class="n">createBean</span><span class="p">()</span><span class="err">`</span><span class="w"> </span><span class="n">方法实际上是延迟调用的</span><span class="err">，</span><span class="n">后续在</span><span class="w"> </span><span class="n">spring</span><span class="w"> </span><span class="n">三级缓存中会具体讲解</span><span class="err">，</span><span class="n">这里我们可以视为直接调用了</span><span class="w"> </span><span class="err">`</span><span class="n">createBean</span><span class="p">()</span><span class="w"> </span><span class="n">方法</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">=&gt;</span><span class="w"> </span><span class="n">org</span><span class="p">.</span><span class="na">springframework</span><span class="p">.</span><span class="na">beans</span><span class="p">.</span><span class="na">factory</span><span class="p">.</span><span class="na">support</span><span class="p">.</span><span class="na">AbstractAutowireCapableBeanFactory</span><span class="err">#</span><span class="n">resolveBeforeInstantiation</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">beanName</span><span class="p">,</span><span class="w"> </span><span class="n">RootBeanDefinition</span><span class="w"> </span><span class="n">mbd</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">=&gt;</span><span class="w"> </span><span class="n">org</span><span class="p">.</span><span class="na">springframework</span><span class="p">.</span><span class="na">beans</span><span class="p">.</span><span class="na">factory</span><span class="p">.</span><span class="na">support</span><span class="p">.</span><span class="na">AbstractAutowireCapableBeanFactory</span><span class="err">#</span><span class="n">applyBeanPostProcessorsBeforeInstantiation</span><span class="p">(</span><span class="n">Class</span><span class="o">&lt;?&gt;</span><span class="w"> </span><span class="n">beanClass</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">beanName</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>这里就是具体执行 <code>BeanPostProcessor</code> 的位置：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -778,11 +820,20 @@
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div><p>在上面的 <code>shouldSkip()</code> 方法中，会尝试去获取所有的 Advisor，未创建的话，则会去尝试创建这些 <code>Advisor</code>。
-<code>org.springframework.aop.framework.autoproxy.AbstractAutoProxyCreator#shouldSkip(Class&lt;?&gt; beanClass, String beanName)</code>
-=&gt; <code>org.springframework.aop.framework.autoproxy.AspectJAwareAdvisorAutoProxyCreator#findCandidateAdvisors()</code>
-=&gt; <code>org.springframework.aop.framework.autoproxy.BeanFactoryAdvisorRetrievalHelper#findAdvisorBeans()</code></p>
+</div><p>在上面的 <code>shouldSkip()</code> 方法中，会尝试去获取所有的 Advisor，未创建的话，则会去尝试创建这些 <code>Advisor</code>。</p>
 <div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">org</span><span class="p">.</span><span class="na">springframework</span><span class="p">.</span><span class="na">aop</span><span class="p">.</span><span class="na">framework</span><span class="p">.</span><span class="na">autoproxy</span><span class="p">.</span><span class="na">AbstractAutoProxyCreator</span><span class="err">#</span><span class="n">shouldSkip</span><span class="p">(</span><span class="n">Class</span><span class="o">&lt;?&gt;</span><span class="w"> </span><span class="n">beanClass</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">beanName</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">=&gt;</span><span class="w"> </span><span class="n">org</span><span class="p">.</span><span class="na">springframework</span><span class="p">.</span><span class="na">aop</span><span class="p">.</span><span class="na">framework</span><span class="p">.</span><span class="na">autoproxy</span><span class="p">.</span><span class="na">AspectJAwareAdvisorAutoProxyCreator</span><span class="err">#</span><span class="n">findCandidateAdvisors</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">=&gt;</span><span class="w"> </span><span class="n">org</span><span class="p">.</span><span class="na">springframework</span><span class="p">.</span><span class="na">aop</span><span class="p">.</span><span class="na">framework</span><span class="p">.</span><span class="na">autoproxy</span><span class="p">.</span><span class="na">BeanFactoryAdvisorRetrievalHelper</span><span class="err">#</span><span class="n">findAdvisorBeans</span><span class="p">()</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
@@ -859,13 +910,26 @@
 </div><p>最终在 <code>BeanFactoryAdvisorRetrievalHelper</code> 中，获取到了所有的 <code>advisor</code>。
 对于没有指定 <code>targetSource</code> 的 Bean，<code>AbstractAdvisorAutoProxyCreator</code> 不会对其进行任何操作，而是只进行了 Advisor 的初始化。</p>
 <h2 id="创建代理类">创建代理类
-</h2><p>从 <code>createBean()</code> 方法开始，我们再来看一下代理类具体是怎么创建的：
-<code>org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#createBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)</code></p>
-<p>=&gt; <code>org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#doCreateBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)</code></p>
-<p><code>doCreateBean</code> 就是实际上创建 Bean 的方法，当 Bean 被实例化完成之后，会执行 Bean 的初始化，当其初始化结束之后，就会执行 <code>AbstractAdvisorAutoProxyCreator</code> 实现的另一个重要方法，代理类的构建就是在这里完成的。</p>
-<p>=&gt; <code>org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#initializeBean(String beanName, Object bean, @Nullable RootBeanDefinition mbd)</code></p>
-<p>=&gt; <code>org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName)</code></p>
-<p>这个方法会执行所有的 <code>BeanPostProcessor</code> 的 <code>postProcessAfterInitialization()</code> 方法，<code>AbstractAdvisorAutoProxyCreator</code> 中的这个方法就是在这里执行的：</p>
+</h2><p>从 <code>createBean()</code> 方法开始，我们再来看一下代理类具体是怎么创建的：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">org</span><span class="p">.</span><span class="na">springframework</span><span class="p">.</span><span class="na">beans</span><span class="p">.</span><span class="na">factory</span><span class="p">.</span><span class="na">support</span><span class="p">.</span><span class="na">AbstractAutowireCapableBeanFactory</span><span class="err">#</span><span class="n">createBean</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">beanName</span><span class="p">,</span><span class="w"> </span><span class="n">RootBeanDefinition</span><span class="w"> </span><span class="n">mbd</span><span class="p">,</span><span class="w"> </span><span class="nd">@Nullable</span><span class="w"> </span><span class="n">Object</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">=&gt;</span><span class="w"> </span><span class="n">org</span><span class="p">.</span><span class="na">springframework</span><span class="p">.</span><span class="na">beans</span><span class="p">.</span><span class="na">factory</span><span class="p">.</span><span class="na">support</span><span class="p">.</span><span class="na">AbstractAutowireCapableBeanFactory</span><span class="err">#</span><span class="n">doCreateBean</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">beanName</span><span class="p">,</span><span class="w"> </span><span class="n">RootBeanDefinition</span><span class="w"> </span><span class="n">mbd</span><span class="p">,</span><span class="w"> </span><span class="nd">@Nullable</span><span class="w"> </span><span class="n">Object</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">doCreateBean</span><span class="w"> </span><span class="n">就是实际上创建</span><span class="w"> </span><span class="n">Bean</span><span class="w"> </span><span class="n">的方法</span><span class="err">，</span><span class="n">当</span><span class="w"> </span><span class="n">Bean</span><span class="w"> </span><span class="n">被实例化完成之后</span><span class="err">，</span><span class="n">会执行</span><span class="w"> </span><span class="n">Bean</span><span class="w"> </span><span class="n">的初始化</span><span class="err">，</span><span class="n">当其初始化结束之后</span><span class="err">，</span><span class="n">就会执行</span><span class="w"> </span><span class="n">AbstractAdvisorAutoProxyCreator</span><span class="w"> </span><span class="n">实现的另一个重要方法</span><span class="err">，</span><span class="n">代理类的构建就是在这里完成的</span><span class="err">。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">=&gt;</span><span class="w"> </span><span class="err">`</span><span class="n">org</span><span class="p">.</span><span class="na">springframework</span><span class="p">.</span><span class="na">beans</span><span class="p">.</span><span class="na">factory</span><span class="p">.</span><span class="na">support</span><span class="p">.</span><span class="na">AbstractAutowireCapableBeanFactory</span><span class="err">#</span><span class="n">initializeBean</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">beanName</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="w"> </span><span class="n">bean</span><span class="p">,</span><span class="w"> </span><span class="nd">@Nullable</span><span class="w"> </span><span class="n">RootBeanDefinition</span><span class="w"> </span><span class="n">mbd</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">=&gt;</span><span class="w"> </span><span class="err">`</span><span class="n">org</span><span class="p">.</span><span class="na">springframework</span><span class="p">.</span><span class="na">beans</span><span class="p">.</span><span class="na">factory</span><span class="p">.</span><span class="na">support</span><span class="p">.</span><span class="na">AbstractAutowireCapableBeanFactory</span><span class="err">#</span><span class="n">applyBeanPostProcessorsAfterInitialization</span><span class="p">(</span><span class="n">wrappedBean</span><span class="p">,</span><span class="w"> </span><span class="n">beanName</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>这个方法会执行所有的 BeanPostProcessor 的 postProcessAfterInitialization() 方法，AbstractAdvisorAutoProxyCreator 中的这个方法就是在这里执行的：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
