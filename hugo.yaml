@@ -31,7 +31,7 @@ services:
 
 # 每页多少篇文章
 pagination:
-    pagerSize: 3
+    pagerSize: 5
 
 permalinks:
     post: /p/:slug/
@@ -200,7 +200,7 @@ menu:
     social:
         - identifier: github
           name: GitHub
-          url: https://github.com/KkQ36
+          url: https://github.com/RyanYuan-commits
           params:
               icon: brand-github
 
