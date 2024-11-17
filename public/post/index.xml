@@ -771,15 +771,15 @@ Spring 使用 SmartClassLoader 检测目标类的类加载器和代理类的类�
 &lt;/h1&gt;&lt;p&gt;Bitmap（位图），顾名思义，是一种以二进制位（bit）来表示数据的特殊数据结构。&lt;/p&gt;
 &lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;Bitmap%e6%a1%88%e4%be%8b.png&#34; &gt;Bitmap案例&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;在编程中，我们往往需要记录某种状态，比如签到系统中的 &lt;strong&gt;用户签到状态&lt;/strong&gt;，答题中的每道题&lt;strong&gt;作答状态&lt;/strong&gt;，对于这种只有两种情况的状态，如果使用传统的数据结构，往往需要非常多的存储空间；   &lt;br&gt;
-比如我们使用用户 id 来存储用户状态，比如使用 java 中的 int，每个 id 就需要 4 字节的存储空间；但是 Bitmap 通过将每一个状态（0或1）直接映射为一个位，就大大的节省了空间。&lt;/p&gt;
-&lt;p&gt;BitMap 有这些优点：&lt;/p&gt;
+比如我们使用用户 id 来存储用户状态，比如使用 java 中的 int，每个 id 就需要 4 字节的存储空间；但是 Bitmap 通过将每一个状态（0或1）直接映射为一个位，就大大的节省了空间。   &lt;br&gt;
+BitMap 有这些优点：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;空间效率很高，假设要存储一亿个用户的状态，使用 Bitmap 就只占用 12MB 的存储空间。&lt;/li&gt;
 &lt;li&gt;查询速度快，不管查询哪个数据，都只需要 O(1) 的时间复杂度。&lt;/li&gt;
-&lt;li&gt;简单易用，看了上面的介绍，大家应该也能实现一个简单的 Bitmap 了，在使用中，也只是简单的插入、查找、删除指令。&lt;/li&gt;
+&lt;li&gt;简单易用，看了上面的介绍，大家应该也能实现一个简单的 Bitmap 了，在使用中，也只是简单的插入、查找、删除指令。   &lt;br&gt;
+但是，Bitmap只能表示两种状态，不适合需要更多状态表示的场景。   &lt;br&gt;
+此外，若数据稀疏（如仅有几个特定位被设置），则可能导致浪费存储空间，比如上面一亿用户的例子，可能只有几个人的状态被记录，那就会大量浪费空间。&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;但是，Bitmap只能表示两种状态，不适合需要更多状态表示的场景。&lt;/p&gt;
-&lt;p&gt;此外，若数据稀疏（如仅有几个特定位被设置），则可能导致浪费存储空间，比如上面一亿用户的例子，可能只有几个人的状态被记录，那就会大量浪费空间。&lt;/p&gt;
 &lt;h1 id=&#34;布隆过滤器bloom-filter&#34;&gt;布隆过滤器（Bloom Filter）
 &lt;/h1&gt;&lt;h2 id=&#34;什么是布隆过滤器&#34;&gt;什么是布隆过滤器
 &lt;/h2&gt;&lt;p&gt;「Wiki-Bloom filter」：&lt;a class=&#34;link&#34; href=&#34;https://en.wikipedia.org/wiki/Bloom_filter&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
@@ -806,24 +806,25 @@ Spring 使用 SmartClassLoader 检测目标类的类加载器和代理类的类�
 &lt;p&gt;但这样无法完全避免误判，比如有三个哈希函数，而一个不存在的元素映射的三个位置都被置为 1，这也是有可能的，但这种概率已经被降到了很小。&lt;/p&gt;
 &lt;p&gt;那，究竟有多小呢？&lt;/p&gt;
 &lt;h2 id=&#34;布隆过滤器的误判率是多少&#34;&gt;布隆过滤器的误判率是多少？
-&lt;/h2&gt;&lt;p&gt;假设布隆过滤器的数组长度为 $m$，插入元素的个数为 $n$，使用哈希函数的个数为 $k$。&lt;/p&gt;
-&lt;p&gt;对于一个特定的位，在插入一个元素时被置为 1 的概率为 $p = 1/m$。&lt;/p&gt;
-&lt;p&gt;插入 $n$ 个元素后，这个位仍然为 0 的概率为 $(1 - p)^{kn}$。&lt;/p&gt;
-&lt;p&gt;那么这个位为 1 的概率就是 $1-(1 - p)^{kn}$。&lt;/p&gt;
-&lt;p&gt;当查询一个不在集合中的元素时，如果确定其存在的话，对于每个哈希函数对应的位都应该为 1，$P=(1-(1 - p)^{kn})^{k}$。&lt;/p&gt;
-&lt;p&gt;将 $p = 1/m$ 代入上式，可得 $P=(1-(1-\frac{1}{m})^{kn})^{k}$。&lt;/p&gt;
-&lt;p&gt;对结果进行分析可以得知，数组长度越高，哈希函数越多的话，误判率越低，也非常符合我们的直觉。&lt;/p&gt;
-&lt;p&gt;因为 $m$ 的值，也就是布隆过滤器的容量可以非常大，可以近似认为趋近于 $+\infty$，此时上式可以视为 $P \approx (1 - e^\frac{-kn}{m})^k$&lt;/p&gt;
-&lt;p&gt;绝大多数的时间，我们关注的都是误判率和插入元素的个数，即 $P$ 和 $n$，所以我们希望能够指定这两个个数，然后通过计算得出哈希函数的个数 k 和数组长度 m&lt;/p&gt;
-&lt;p&gt;通过数学分析，我们可以发现，当  $k = \frac{m}{n} \ln 2$  时，误判率 P 最小，将这个值代入上面的式子，简化指数项，可以得出 $P \approx \left( 1 - \frac{1}{2} \right)^{\frac{m}{n} \ln 2}$&lt;/p&gt;
-&lt;p&gt;进而得出：  $P \approx \left( \frac{1}{2} \right)^k$&lt;/p&gt;
-&lt;p&gt;可以推导出 $P$ 和 $k$ 的关系，为：$k = -\frac{\ln P}{\ln 2}$&lt;/p&gt;
-&lt;p&gt;将这个式子代入 $k = \frac{m}{n} \ln 2$，可以得出 $m$ 和 $p$ 的关系，$m = \frac{n\ln P}{(\ln 2)^2}$&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;假设布隆过滤器的数组长度为 $m$，插入元素的个数为 $n$，使用哈希函数的个数为 $k$。   &lt;br&gt;
+对于一个特定的位，在插入一个元素时被置为 1 的概率为 $p = 1/m$。     &lt;br&gt;
+插入 $n$ 个元素后，这个位仍然为 0 的概率为 $(1 - p)^{kn}$。    &lt;br&gt;
+那么这个位为 1 的概率就是 $1-(1 - p)^{kn}$。     &lt;br&gt;
+当查询一个不在集合中的元素时，如果确定其存在的话，对于每个哈希函数对应的位都应该为 1，$P=(1-(1 - p)^{kn})^{k}$。   &lt;br&gt;
+将 $p = 1/m$ 代入上式，可得 $P=(1-(1-\frac{1}{m})^{kn})^{k}$。   &lt;br&gt;
+对结果进行分析可以得知，数组长度越高，哈希函数越多的话，误判率越低，也非常符合我们的直觉。   &lt;br&gt;
+因为 $m$ 的值，也就是布隆过滤器的容量可以非常大，可以近似认为趋近于 $+\infty$，此时上式可以视为 $P \approx (1 - e^\frac{-kn}{m})^k$   &lt;br&gt;
+绝大多数的时间，我们关注的都是误判率和插入元素的个数，即 $P$ 和 $n$，所以我们希望能够指定这两个个数，然后通过计算得出哈希函数的个数 k 和数组长度 m      &lt;br&gt;
+通过数学分析，我们可以发现，当 
+$k = \frac{m}{n} \ln 2$  时，误判率 P 最小，将这个值代入上面的式子，简化指数项，可以得出 $P \approx \left( 1 - \frac{1}{2} \right)^{\frac{m}{n} \ln 2}$     &lt;br&gt;
+进而得出：  $P \approx \left( \frac{1}{2} \right)^k$     &lt;br&gt;
+可以推导出 $P$ 和 $k$ 的关系，为：$k = -\frac{\ln P}{\ln 2}$   &lt;br&gt;
+将这个式子代入 $k = \frac{m}{n} \ln 2$，可以得出 $m$ 和 $p$ 的关系，$m = \frac{n\ln P}{(\ln 2)^2}$&lt;/p&gt;
 &lt;h2 id=&#34;布隆过滤器的优缺点&#34;&gt;布隆过滤器的优缺点
-&lt;/h2&gt;&lt;p&gt;首先，它是由 bit 数组来构成的，所占空间小。&lt;/p&gt;
-&lt;p&gt;和 Bitmap 相同，其插入和查询的时间复杂度均为 O(1)。&lt;/p&gt;
-&lt;p&gt;但是相较于 Bitmap，只要使用哈希，就不可避免的存在误判，所以布隆过滤器存在误判，但是通过合理的参数配置，误判率可以控制在一个可接受的范围内。&lt;/p&gt;
-&lt;p&gt;同时，布隆过滤器不允许删除元素，如果简单的将所有哈希函数计算出来的索引位置全部置为 1 的话，会引起大范围的误删。&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;首先，它是由 bit 数组来构成的，所占空间小。     &lt;br&gt;
+和 Bitmap 相同，其插入和查询的时间复杂度均为 O(1)。     &lt;br&gt;
+但是相较于 Bitmap，只要使用哈希，就不可避免的存在误判，所以布隆过滤器存在误判，但是通过合理的参数配置，误判率可以控制在一个可接受的范围内。      &lt;br&gt;
+同时，布隆过滤器不允许删除元素，如果简单的将所有哈希函数计算出来的索引位置全部置为 1 的话，会引起大范围的误删。&lt;/p&gt;
 &lt;h2 id=&#34;guava-提供的布隆过滤器实现&#34;&gt;Guava 提供的布隆过滤器实现
 &lt;/h2&gt;&lt;p&gt;「GitHub地址」：&lt;a class=&#34;link&#34; href=&#34;https://github.com/google/guava&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;https://github.com/google/guava&lt;/a&gt;   &lt;br&gt;
@@ -1416,8 +1417,8 @@ Guava，Google Java Core Libraries，是谷歌开发的 Java 核心库。   &lt;
 		data-flex-grow=&#34;160&#34;
 		data-flex-basis=&#34;385px&#34;
 	
-&gt;&lt;/p&gt;
-&lt;p&gt;上图出自「Cuckoo Filter: Practically Better Than Bloom」，由此可知，布谷鸟过滤器在维护低误判率需要的空间成本上比布隆过滤器更低。&lt;/p&gt;
+&gt;   &lt;br&gt;
+上图出自「Cuckoo Filter: Practically Better Than Bloom」，由此可知，布谷鸟过滤器在维护低误判率需要的空间成本上比布隆过滤器更低。&lt;/p&gt;
 </description>
         </item>
         <item>
