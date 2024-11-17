@@ -2,7 +2,8 @@
 author: Ryan Yuan      
 title: Spring 生成的代理类的结构以及拦截器链式调用      
 date: 2024-11-17      
-image: image.png      
+image: image.png    
+description: 通过 getBean() 获取的代理类源码详解  
 categories:      
     - SpringAOP源码解析      
 ---      
