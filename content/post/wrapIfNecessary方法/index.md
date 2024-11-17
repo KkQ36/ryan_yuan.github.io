@@ -2,8 +2,8 @@
 author: Ryan Yuan
 title: Spring AOP 代理类创建方法解析
 description: wrapIfNessary 方法梳理
-date: 2024-11-12
-image: pawel-czerwinski-8uZPynIu-rQ-unsplash.jpg
+date: 2024-11-17
+image: image.png
 categories:
     - SpringAOP源码解析
 ---
