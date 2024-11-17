@@ -2,33 +2,33 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
         <title>Categories on Ryan Yuan&#39;s Blog</title>
-        <link>http://localhost:1313/categories/</link>
+        <link>http://localhost:60831/categories/</link>
         <description>Recent content in Categories on Ryan Yuan&#39;s Blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>Ryan_Yuan</copyright>
-        <lastBuildDate>Fri, 15 Nov 2024 00:00:00 +0000</lastBuildDate><atom:link href="http://localhost:1313/categories/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sun, 17 Nov 2024 00:00:00 +0000</lastBuildDate><atom:link href="http://localhost:60831/categories/index.xml" rel="self" type="application/rss+xml" /><item>
         <title>SpringAOP源码解析</title>
-        <link>http://localhost:1313/categories/springaop%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</link>
-        <pubDate>Fri, 15 Nov 2024 00:00:00 +0000</pubDate>
+        <link>http://localhost:60831/categories/springaop%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</link>
+        <pubDate>Sun, 17 Nov 2024 00:00:00 +0000</pubDate>
         
-        <guid>http://localhost:1313/categories/springaop%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</guid>
+        <guid>http://localhost:60831/categories/springaop%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</guid>
         <description></description>
         </item>
         <item>
         <title>Test</title>
-        <link>http://localhost:1313/categories/test/</link>
+        <link>http://localhost:60831/categories/test/</link>
         <pubDate>Sat, 09 Mar 2019 00:00:00 +0000</pubDate>
         
-        <guid>http://localhost:1313/categories/test/</guid>
-        <description>&lt;img src="http://localhost:1313/categories/test/hutomo-abrianto-l2jk-uxb1BY-unsplash.jpg" alt="Featured image of post Test" /&gt;</description>
+        <guid>http://localhost:60831/categories/test/</guid>
+        <description>&lt;img src="http://localhost:60831/categories/test/hutomo-abrianto-l2jk-uxb1BY-unsplash.jpg" alt="Featured image of post Test" /&gt;</description>
         </item>
         <item>
         <title>Test With Whitespaces</title>
-        <link>http://localhost:1313/categories/test-with-whitespaces/</link>
+        <link>http://localhost:60831/categories/test-with-whitespaces/</link>
         <pubDate>Sat, 09 Mar 2019 00:00:00 +0000</pubDate>
         
-        <guid>http://localhost:1313/categories/test-with-whitespaces/</guid>
+        <guid>http://localhost:60831/categories/test-with-whitespaces/</guid>
         <description></description>
         </item>
         

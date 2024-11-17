@@ -7,7 +7,7 @@ image: image.png
 categories:
     - SpringAOP源码解析
 ---
-[关于]({{< ref "/Spring代理类创建流程梳理" >}} "Spring代理类创建流程梳理")
+[Spring代理类创建流程梳理]({{< ref "../Spring代理类创建流程梳理/index.md" >}} "关于我们")
 
 沿着上节的流程，详细的来看看 `wrapIfNecessary()` 方法：
 ```java
