@@ -7,7 +7,7 @@ image: image.png
 categories:
     - SpringAOP源码解析
 ---
-[Spring 代理类创建流程梳理](../Spring代理类创建流程梳理/index.md)
+[Spring 代理类创建流程梳理](../Spring代理类创建流程梳理)
 
 沿着上节的流程，详细的来看看 `wrapIfNecessary()` 方法：
 ```java
