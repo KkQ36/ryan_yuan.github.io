@@ -72,7 +72,7 @@ wait_table_again:
 ```
 则不会生成 Read View，而是先在尝试在表格上加一个意向锁（S 锁 或者 X 锁）。
 ## Read View 的构成
-![Read View 的构成](https://i-blog.csdnimg.cn/direct/61aa696105064c98a237863ef4a7e18a.png)
+![Read View 的构成](ReadView构成.png)
 
 Read View 有四个重要的字段：
 - `m_ids` ：指的是在创建 Read View 时，当前数据库中「活跃事务」的**事务 id 列表**，注意是一个列表，**“活跃事务”指的就是，启动了但还没提交的事务**。
@@ -108,7 +108,7 @@ private:
 ```
 除了上面提到的四个变量，还有一个 `m_low_limit_no`，这个变量是当前事务读取的 `undo-log` 的最小值，用于确定视图不需要看到哪些事务的回滚日志。如果一个事务的事务号严格小于这个值，并且如果没有其他视图需要这些回滚日志，那么这些回滚日志可以在清理（purge）操作中被移除。
 上面提到的四个重要字段圈定了这么一个范围：
-![ReadView 圈定的范围](https://i-blog.csdnimg.cn/direct/e152cd1c7e4e446685723baa28ed9735.png)
+![ReadView 圈定的范围](ReadView圈定的范围.png)
 
 
 当一个事务执行的过程中，它应该只能看到在其启动已经完成的事务，那就来看看哪些事务可以满足这个情况：
@@ -123,8 +123,7 @@ private:
 ```sql
 SELECT * FROM INFORMATION_SCHEMA.INNODB_TRX;
 ```
-![!\[\[事务 ID 的分配.png\]\]](https://i-blog.csdnimg.cn/direct/eefa99cd6efb445db945f88f8ccb833a.png)
-
+![事务 ID 的分配.png](事务ID的分配.png)
 
 1. 开始的时候，事务表中没有任何事务。
 2. 然后我们执行 `BEGIN` 语句，可以观察到还是没有任何的数据产生。
@@ -132,7 +131,7 @@ SELECT * FROM INFORMATION_SCHEMA.INNODB_TRX;
 但是当我们执行修改语句的时候，事情变得离奇起来，事务的 ID 居然变了，这是因为在 MySQL 中（当前使用的是版本 8.0.26），只读的事务分配的是一个虚拟的 trx_id，其值一定是大大超过当前执行修改数据的事务的，只有当事务真正的要修改数据库的时候，才会产生实际的事务 ID。
 trx_id 是由 InnoDB 内部维护的，InnoDB 内部维护了一个 max_trx_id 全局变量，每次需要申请一个新的 trx_id 时，就获得 max_trx_id 的当前值，然后并将 max_trx_id 加 1，这也是为什么我们连续启动两个修改数据的事务的时候，事务 ID 会是相邻的两个 ID。
 但是即使分配的是虚拟的事务 ID，Read View 也是在执行 SELECT 语句后立刻创建的，所以延迟分配 ID 并不会影响 MVCC 的效果 ，来看这样一个案例：
-![MySQL 事务 ID 生成](https://i-blog.csdnimg.cn/direct/f36075d5cb7b4e4395a667aa80989c9c.png)
+![MySQL 事务 ID 生成](事务ID的生成.png)
 
 上面的案例中，我们启动运行了两个事务，第一个事务执行 SELECT 语句生成 Read View，第二个事务启动并添加新的记录，此时第一个事务再执行 UPDATE 语句（不要 UPDATE 第二个事务新添加的数据，否则会就会出现幻读）；此时可以看到第一个事务的 ID 是大于第二个事务的，第二个事务提交之后第一个事务也是看不到其添加的数据的。
 上面的案例也佐证了 Read View 生成的时机是执行普通 SELECT 语句的时候，可能早于真实事务 ID 的分配。
@@ -172,7 +171,7 @@ trx_id 是由 InnoDB 内部维护的，InnoDB 内部维护了一个 max_trx_id �
 # MySQL 中的隐藏列
 上面的 Read View 帮助我们解决了当前事务该看到什么记录。
 但是不同的事务所看到的记录是不相同的，需要有一个位置能够将这些不同事务看到的不同记录存储下来，这就是 MySQL 中的隐藏列要解决的问题。
-![undo log 图例](https://i-blog.csdnimg.cn/direct/3a3f97dc6c1f4e18813cc75560c6d8d2.png)
+![undo log 图例](undolog图例.png)
 
 它里面包含两个隐藏列：
 - trx_id，当一个事务对某条聚簇索引记录进行改动时，就会**把该事务的事务 id 记录在 trx_id 隐藏列里**；
