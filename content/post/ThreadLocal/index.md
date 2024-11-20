@@ -1,3 +1,10 @@
+---
+author: Ryan Yuan
+title: ThreadLocal、InheritableThreadLocal 源码解析
+date: 2024-11-09
+image: image.png
+---
+
 `ThreadLocal` ，从字面含义上来看就是："线程本地"，这形象的说明了它的用处： `ThreadLocal` 正是 Java 提供的一种线程本地存储机制，可以利用该就只将数据还存在某个线程的内部，该线程可以在任意的时刻、任意的方法中去获取缓存的数据。            
 # 基本介绍            
 `ThreadLocal` 共有两种类型， `ThreadLocal` 本身和他的子类 `InheritableThreadLocal`。            
