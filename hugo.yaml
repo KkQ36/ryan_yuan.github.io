@@ -206,9 +206,9 @@ menu:
 
         - identifier: csdn
           name: Twitter
-          url: https://twitter.com
+          url: https://blog.csdn.net/weixin_74895237
           params:
-              icon: brand-twitter
+              icon: brand-csdn
 
 related:
     includeNewer: true
