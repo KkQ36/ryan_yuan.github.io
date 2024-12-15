@@ -324,7 +324,7 @@ int n; //  table 的长度
 第一个 if 中 table == null || tab.length == 0 判断 table 数组是否被创建，如果没有执行 HashMap#resize 方法，创建 table；         
 前面经常提到的 HashMap 将 table 的创建延后到第一次插入元素时进行就体现在这里。         
          
-第二个 if 中 tab\[(n - 1) & hash\] == null 判断的是，插入位置是否有元素，若为 null 就说明没有发生哈希冲突，直接插入即可。         
+第二个 if 中 tab[(n - 1) & hash] == null 判断的是，插入位置是否有元素，若为 null 就说明没有发生哈希冲突，直接插入即可。         
 如果插入位置有元素，就需要使用链地址法，这部分的代码比较复杂，放到后面单独讲解。         
          
 putVal 有两种情况：插入新的元素、替换已经存在的 K-V 对中的 value，；         
@@ -512,7 +512,7 @@ if (oldTab != null) {
 }         
 return newTab;         
 ```         
-首先根据上面计算出来的新的容量，创建一个数组 Node<K,V>\[] newTab = (Node<K,V>\[])new Node\[newCap];         
+首先根据上面计算出来的新的容量，创建一个数组 Node<K,V>[] newTab = (Node<K,V>[])new Node[newCap];         
 然后如果老 table 不为 null，就需要执行复制转移的操作，使用一个 for 循环来遍历老 table 的所有位置，当发现 Node e 不为 null 的时候         
 - 如果 e.next 为 null，表明该位置只有一个节点，直接映射到该位置；         
 - 而如果该位置是红黑树节点，调用 split 方法进行处理；         
@@ -689,10 +689,10 @@ newTable[i] = e;
 ```         
 假设此时有一个线程 1，它的局部变量表中的 e 存储的是 A 节点，next 存储的是 B 节点，然后其被调度下线；         
 此时线程 2，也在执行 resize 方法，它将 A、B、C 插入到新的链表中；         
-此时线程 1 被调度上线，它仍认为此时还未进行转移，依然执行，e.next = newTable\[I]; 此时就将 A 指向了 C;         
-然后移动指针，此时 e 为 B，next 为 null，再次执行 e.next = newTable\[I]，这时候又将 B 指向了 C，循环结束：         
+此时线程 1 被调度上线，它仍认为此时还未进行转移，依然执行，e.next = newTable[I]; 此时就将 A 指向了 C;         
+然后移动指针，此时 e 为 B，next 为 null，再次执行 e.next = newTable[I]，这时候又将 B 指向了 C，循环结束：         
 ![JDK7 中并发 put 会造成循环链表.png|500](JDK7中并发put会造成循环链表.png)  
-这时候，一个循环链表就产生了，产生这个问题的根本原因就是 JDK 7 多个线程在插入过程中不断的并发操控 newTable，因为其在新的数组中的顺序和旧的数组中是不同的，所以多个线程执行 e.next = newTable\[I]; 的时候，会导致指针的回连，我们来看看这个问题在 JDK8 是如何被解决的：         
+这时候，一个循环链表就产生了，产生这个问题的根本原因就是 JDK 7 多个线程在插入过程中不断的并发操控 newTable，因为其在新的数组中的顺序和旧的数组中是不同的，所以多个线程执行 e.next = newTable[I]; 的时候，会导致指针的回连，我们来看看这个问题在 JDK8 是如何被解决的：         
 ```java         
 do {         
 	next = e.next;         
