@@ -545,7 +545,7 @@ if (hiTail != null) {
 }         
 ```         
 对于这些节点我们需要明确一下，它们的 hash 值与 oldTab.length - 1 做 **按位与** 操作得到的结果是相同的，那它们在新的链表中的索引，也就是 hash 与 oldTab.length \* 2 - 1 做异或操作，就只有两种情况，要么与原本位置相同，要么就是原本位置加上一个 oldTab.length，为什么呢？         
-![HashMap 扩容优化.png|500](HashMap%20扩容优化.png)         
+![HashMap 扩容优化.png|500](HashMap扩容优化.png)         
 我们以 16 拓展到 32 为例，位于数组相同位置的元素要么是 0 跟上相同的四位相同的值，要么是 1 跟上四位相同的值，而这些以 1 开头的 key，与 32 - 1 做按位与之后，得到的结果就是原本的位置加上一个 16，也就是 oldTab.length，而对于原本该位置为 0 的元素，位置则不会改变；我们将位于原本位置 + oldTab.length 的元素称为高位元素，将仍处于原本位置的命名为低位元素；由此引出了下面的四种变量：         
 ```java         
 Node<K,V> loHead = null, loTail = null; // 需要放置在新 table 低位节点的头部和尾部         
@@ -608,7 +608,7 @@ if (e != null) { // 针对替换操作的逻辑
 ```         
 上面截取的是 HashMap 插入的时候如果插入的位置有元素的情况；         
 我们假设此时这个位置有一个元素 k1：         
-![线程 put 导致的元素丢失问题1.png|100](线程%20put%20导致的元素丢失问题1.png)         
+![线程 put 导致的元素丢失问题1.png|100](多线程put导致的元素丢失问题1.png)         
 此时一个线程插入 k2，另一个线程插入 k3；假设两个线程都判断 if ((e = p.next) == null) 为 true，进入到这个代码段：         
 ```java         
 p.next = newNode(hash, key, value, null);         
@@ -616,7 +616,7 @@ if (binCount >= TREEIFY_THRESHOLD - 1) treeifyBin(tab, hash);
 break;         
 ```         
 此时线程 1 插入了 k2，结构如下图所示         
-![多线程 put 导致的元素丢失问题 2.png|300](多线程%20put%20导致的元素丢失问题%202.png)        
+![多线程 put 导致的元素丢失问题 2.png|300](多线程put导致的元素丢失问题2.png)        
 但是线程 2 仍然会执行 p.next = newNode(hash, key, value, null); 将 k3 插入，此时 k2 就丢失了，这就是多线程 put 导致的元素丢失问题。         
 ## put 和 get 并发的时候可能导致 get 为 null         
 线程 1 执行 put 时，因为元素个数超出 threshold 而导致 rehash，线程 2 此时执行 get，有可能导致这个问题。         
@@ -681,7 +681,7 @@ void transfer(Entry[] newTable, boolean rehash) {
 }         
 ```         
 JDK 7 的扩容，采用的是头插法，也就是将新加入的数据，作为 Bucket 中存储的第一个数据，下图中展示的是一个扩容操作，插入的顺序是 A、B、C，但扩容之后的结果顺序是 C、B、A         
-![头插法.png|700](./头插法.png)        
+![头插法.png|700](头插法.png)        
 其具体逻辑表现在这段代码上，e 是要插入新 table 的节点：         
 ```java         
 e.next = newTable[I];         
@@ -691,7 +691,7 @@ newTable[i] = e;
 此时线程 2，也在执行 resize 方法，它将 A、B、C 插入到新的链表中；         
 此时线程 1 被调度上线，它仍认为此时还未进行转移，依然执行，e.next = newTable\[I]; 此时就将 A 指向了 C;         
 然后移动指针，此时 e 为 B，next 为 null，再次执行 e.next = newTable\[I]，这时候又将 B 指向了 C，循环结束：         
-![JDK7 中并发 put 会造成循环链表.png|500](JDK7%20中并发%20put%20会造成循环链表.png)  
+![JDK7 中并发 put 会造成循环链表.png|500](JDK7中并发put会造成循环链表.png)  
 这时候，一个循环链表就产生了，产生这个问题的根本原因就是 JDK 7 多个线程在插入过程中不断的并发操控 newTable，因为其在新的数组中的顺序和旧的数组中是不同的，所以多个线程执行 e.next = newTable\[I]; 的时候，会导致指针的回连，我们来看看这个问题在 JDK8 是如何被解决的：         
 ```java         
 do {         
