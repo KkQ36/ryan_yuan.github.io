@@ -5,8 +5,8 @@ date: 2024-12-15
 image: image.png
 ---   
           
-# 散列表与哈希算法         
-## 数组和链表         
+## 散列表与哈希算法         
+#### 数组和链表         
 ![数组和链表.png](数组和链表.png)         
 ==数组==：数组是一种 **线性数据结构**，由一组连续的内存单元组成，每个元素都有固定的 **索引** 位置。         
 数组的优点是 **可以通过索引快速访问元素**，访问元素的时间复杂度为O(1)。         
@@ -15,7 +15,7 @@ image: image.png
 ==链表==：链表也是一种线性数据结构，由一系列节点组成，每个节点包含一个数据元素和一个指向下一个节点的指针。         
 链表的优点是 **插入和删除操作** 可以在O(1)时间内完成，无需移动其他元素。         
 缺点是访问元素时需要 **遍历整个链表**，时间复杂度为O(n)，并且相比数组占用更多的内存空间。         
-## 散列表         
+#### 散列表         
 ![散列表.png|500](散列表.png)        
 与上面的两种数据结构不同的是，散列表是用来 **存储键值对** 的，在实现方式上，散列表像是数组 + 链表的一个结合，也就是基本的结构是一个数组，但数组中存储的元素是一个链表（本文仅讨论链地址法）。         
 提到数组，最显著的特点就是索引，散列表是通过 **哈希算法** 将键映射成一个长度固定的二进制数，然后通过 **路由算法** 将其映射到数组的索引中；         
@@ -24,7 +24,7 @@ image: image.png
 通过这样的方式，散列表拥有了和链表一样快的插入速度，也有了可以媲美数组的查询速度，但是一切使用哈希算法的结构都不可避免的会遇到哈希冲突，即不同的 key 经过映射之后得到了相同的结果，需要解决冲突的方法，链地址法、开放散列法等；         
          
 在 HashMap 中使用的是优化之后的链地址法，即在数组的某个位置存储的是一个链表结构，如果遇到哈希冲突就将这些元素链接起来；与传统的链地址法不同的是，HashMap 的链地址法当某个位置链表过长的时候，会将这个链表转化为一个红黑树。         
-## 哈希算法         
+#### 哈希算法         
 ![哈希算法.png|700](哈希算法.png)   
 Hash 的中文释义为散列，一般音译为哈希。哈希算法的功能是将 **任意长度** 的输入，通过算法转变为固定长度的输出。         
 映射的规则称为 **哈希算法**，原始数据通过映射之后得到的二进制串就是 **哈希值**。         
@@ -33,15 +33,15 @@ Hash 的中文释义为散列，一般音译为哈希。哈希算法的功能是
 - 无法通过哈希值反推出原始的数据，且数据一点微小的变化都会得到完全不同的哈希值，相同的数据会得到完全相同的哈希值，这两个特点使得哈希算法在安全方面有广泛的应用，比如 https 的数字证书的签名认证。         
 - 哈希算法的执行效率很高效，长文本也能很快的算出对应的哈希值。         
 - 由于是将任意长度是输出映射为固定长度的输出，将无限种数据映射为有范围的数据，必然会导致冲突，这也就是我们常说的 **哈希冲突**。如何处理哈希冲突是使用哈希函数的时候需要解决的问题。         
-# HashMap 实现概览         
-## 数据结构         
+## HashMap 实现概览         
+#### 数据结构         
 Java 中的 HashMap 就是基于 **散列表** 实现的，其底层是通过数组+链表（Java8 引入了红黑树）来存储数据的。         
 HashMap 内部维护了一个数组，它是 HashMap 实例的一个成员变量，名为 table，这个数组的每个位置称为桶（Bucket）。 初始的数组长度如果不指定的话默认为 16，当插入元素过多的时候，HashMap 会使用一个更大的数组替换原来的 table，然后将原本 table 中的元素重新映射到这个新的数组。         
          
 Java 8 之后，HashMap 使用了数组 + 链表 + 红黑树的结构，以应对哈希冲突。每个桶可以存储一个链表或红黑树。         
 当哈希冲突发生时，新的键值对会被插入到对应位置的链表或红黑树中，具体来说，当某个链表的长度超过一定阈值（默认为8），且 table 的长度超过某个阈值（默认为 64）的时候，这个长链表会转换为红黑树，以提高查找、插入、删除操作的效率；红黑树是一种二叉查找树，它的查找时间复杂度为 O(log n) ，链表则是 O(n)。         
-## 路由算法         
-通过 Object#hashCode 得到的整数可能无法直接作为数组，Object#hashCode 方法的结果是 int 类型，它表示的值有很大可能超过此时数组的长度，此时就需要再经过一次映射来将哈希值转化到数组下标范围内。         
+#### 路由算法         
+通过 Object##hashCode 得到的整数可能无法直接作为数组，Object##hashCode 方法的结果是 int 类型，它表示的值有很大可能超过此时数组的长度，此时就需要再经过一次映射来将哈希值转化到数组下标范围内。         
 HashMap 将键映射为索引是通过了如下的步骤，比如说通过 map.put("key", "value") 插入一个键值对，         
 首先通过调用 String 的 hashCode 方法，将 "key" 这个字符串映射为一个 32 位整数，对这个整数做一些处理（扰动函数），作为最终的哈希值。         
 将最终的哈希值通过路由算法计算，得出最终的 table 索引，HashMap 中的路由算法是这样的：         
@@ -50,7 +50,7 @@ HashMap 将键映射为索引是通过了如下的步骤，比如说通过 map.p
 ```         
 在上面的算法中，table.length - 1 和插入节点的 hash 进行按位与运算；         
 在 HashMap 中，table.length 一定是 2 的幂次，其二进制的特点就是开头为 1 后面为全 0（比如 0001 0000），减一之后转换为二进制就会表现为全 1（0000 1111），此时进行位与运算，就能得到一个大小在数组长度范围内的整数，这个整数就可以直接作为 key 的索引了。         
-## Node 节点         
+#### Node 节点         
 上面我们提到，数组中的某个位置存储的是一个链表或者是一个红黑树，且链表或者红黑树中对元素还需要存储一些其他信息，比如 Key 的真实值，此时将 value 原封不动的存到数组中显然是不可取的；         
 基于以上的种种原因，我们需要将 value 值做一层封装再存储到 table 中，来看看 HashMap 是如何做的：         
 ```java         
@@ -74,7 +74,7 @@ static class Node<K,V> implements Map.Entry<K,V> {
 }         
 ```         
  Node 是 HashMap 的一个静态内部类，它有四个属性，分别为：         
-- int hash：存储映射的哈希值，通过调用 HashMap#hash 方法获取的值，已经过扰动函数处理。         
+- int hash：存储映射的哈希值，通过调用 HashMap##hash 方法获取的值，已经过扰动函数处理。         
 - K key：本节点存储的键         
 - V value：本节点存储的值         
 - Node<K, V> next：存储下一个节点的位置         
@@ -92,9 +92,9 @@ static final class TreeNode<K,V> extends LinkedHashMap.Entry<K,V> {
 ```         
 TreeNode 也是 HashMap 的静态内部类，它继承自 LinkedHashMap.Entry，用于表述 TreeNode 除了作为红黑树的节点以外，还作为一个双向的链表节点，在 HashMap 中，所有节点（无论是链表形式还是红黑树形式）都需要维护一个链表结构，用于维持插入顺序或便于遍历，这个链表并不基于树的层级，而是基于插入的顺序。         
 TreeNode 在 Node 的基础上拓展了 parent、left、right、red 这些红黑树相关的属性，以及 prev 这个指向前驱节点，用于维护双向链表的属性。         
-# 源码阅读         
-## 属性与构造方法         
-### 关键常量解读         
+## 源码阅读         
+#### 属性与构造方法         
+###### 关键常量解读         
 在正式阅读关键源码之前，我们先从了解 HashMap 中的关键常量开始，这些关键常量和 HashMap 的基本结构，以及扩容、树化等特殊机制息息相关，掌握它们对于理解源码很有帮助。         
 ```java         
 /**         
@@ -158,7 +158,7 @@ static final int MIN_TREEIFY_CAPACITY = 64;
 上面的三个常量都和 HashMap 的树化机制有关，TREEIFY_THRESHOLD 和 MIN_TREEIFY_CAPACITY 决定了链表树化的时，具体来说，当一个链表的长度达到 TREEIFY_THRESHOLD（8）且此时 table 的容量达到 MIN_TREEIFY_CAPACITY（64），这个链表会转化为红黑树结构；当 table 容量过小的时候，比如小于 4 * TREEIFY_THRESHOLD，此时发生哈希冲突的概率很大，多个桶可能同时达到 TREEIFY_THRESHOLD，在 table 容量过小的时候执行树化操作是性价比比较低选择，频繁树化操作会影响性能。         
          
 UNTREEIFY_THRESHOLD 是树降级为链表的阈值，当树中的元素因为删除而达到阈值 UNTREEIFY_THRESHOLD 后，将树降级为链表。         
-### 关键属性解读         
+###### 关键属性解读         
 ```java         
 /**         
  * The table, initialized on first use, and resized as         
@@ -195,7 +195,7 @@ int threshold;
 final float loadFactor;         
 ```         
 负载因子的值，可以通过 HashMap(int initialCapacity, float loadFactor) 构造方法指定。         
-### HashMap 的四种构造方法         
+###### HashMap 的四种构造方法         
 HashMap 提供了四种构造方法，它们的参数分别是：初始容量与负载因子、初始容量、无参数、Map。         
          
 ```java         
@@ -212,7 +212,7 @@ HashMap 提供了四种构造方法，它们的参数分别是：初始容量与
 ```         
 先对参数 initialCapacity 和 loadFactor 的有效性做了判断，如果参数无效，直接抛出异常。         
 而当发现 initialCapacity 大于 table 容量的最大值 MAXIMUM_CAPACITY 的时候，会先将 initialCapacity 设为 MAXIMUM_CAPACITY。         
-最后，将 threshold 属性赋值为 tableSizeFor(initialCapacity)，HashMap#tableSizeFor 方法用于计算 table 容量，具体来说是计算大于或等于传入参数的最小的 2 的幂次方值。例如，如果输入为 10，则返回 16；         
+最后，将 threshold 属性赋值为 tableSizeFor(initialCapacity)，HashMap##tableSizeFor 方法用于计算 table 容量，具体来说是计算大于或等于传入参数的最小的 2 的幂次方值。例如，如果输入为 10，则返回 16；         
 在 HashMap 中，table 会延迟到插入元素的时候创建，当用户指定容量之后，HashMap 选择将其存放到 threshold 中，在后续创建 table 的时候取出使用。         
          
 ```java         
@@ -255,25 +255,25 @@ final void putMapEntries(Map<? extends K, ? extends V> m, boolean evict) {
     }           
 }         
 ```         
-当发现 table 未被创建的时候，计算一个合适的初始容量，保存到 threshold 中，table 会在后面 HashMap#putVal 方法中被创建。         
+当发现 table 未被创建的时候，计算一个合适的初始容量，保存到 threshold 中，table 会在后面 HashMap##putVal 方法中被创建。         
 而当 table 不为 null 的时候，如果发现需要插入的元素个数已经达到的自己的扩容阈值，预先进行一次扩容；         
-然后通过迭代器遍历传入的 Map，调用 HashMap#putVal 方法将 K-V 键值对一个一个插入。         
+然后通过迭代器遍历传入的 Map，调用 HashMap##putVal 方法将 K-V 键值对一个一个插入。         
          
 ---         
          
 通过上面的四个构造方法，我们可以得出这么两个结论：         
 - HashMap 为了优化内存，将 table 的初始化时机设计到首次插入元素后；         
-- 使用 HashMap#tableSizeFor 方法保证了 table 的容量一定是 2 的幂次。         
-## 关键方法         
-### putVal 方法         
-当我们想要向 HashMap 中插入元素的，会调用 HashMap#put 方法：         
+- 使用 HashMap##tableSizeFor 方法保证了 table 的容量一定是 2 的幂次。         
+#### 关键方法         
+###### putVal 方法         
+当我们想要向 HashMap 中插入元素的，会调用 HashMap##put 方法：         
 ```java         
  public V put(K key, V value) {         
 	 return putVal(hash(key), key, value, false, true);         
 }         
 ```         
          
-HashMap#put 方法中先调用 HashMap#hash 方法计算得到一个哈希值，将这个返回值作为参数传递给 HashMap#putVal 方法。         
+HashMap##put 方法中先调用 HashMap##hash 方法计算得到一个哈希值，将这个返回值作为参数传递给 HashMap##putVal 方法。         
 ```java         
 static final int hash(Object key) {         
 	 int h;         
@@ -321,7 +321,7 @@ int i; // node 节点插入的位置
 Node<K,V> p;  // i 位置此时的元素，null 表示没有元素         
 int n; //  table 的长度         
 ```         
-第一个 if 中 table == null || tab.length == 0 判断 table 数组是否被创建，如果没有执行 HashMap#resize 方法，创建 table；         
+第一个 if 中 table == null || tab.length == 0 判断 table 数组是否被创建，如果没有执行 HashMap##resize 方法，创建 table；         
 前面经常提到的 HashMap 将 table 的创建延后到第一次插入元素时进行就体现在这里。         
          
 第二个 if 中 tab[(n - 1) & hash] == null 判断的是，插入位置是否有元素，若为 null 就说明没有发生哈希冲突，直接插入即可。         
@@ -331,13 +331,13 @@ putVal 有两种情况：插入新的元素、替换已经存在的 K-V 对中�
 对于插入元素的情况，需要做一些后置的处理，具体来说就是记录 modCount、检查是否需要扩容、执行子类的拓展操作；         
 对与替换的情况，在上面的 else 块中已经处理并返回，不会执行这些操作。         
 - modCount 是 HashMap 结构被修改的次数，对于替换操作，不会引起 modCount 的自增；         
-- if (++size > threshold) resize(); 检测容量是否达到扩容阈值，如果是，执行 HashMap#resize 方法扩容；         
+- if (++size > threshold) resize(); 检测容量是否达到扩容阈值，如果是，执行 HashMap##resize 方法扩容；         
 - afterNodeInsertion 是 HashMap 留给子类的拓展方法，子类可以重写这个方法，在插入方法结束后做一些处理。         
          
 ---         
          
 总结一下，putVal 方法的基本执行流程是这样的：         
-- 先检查 table 是否被创建，如果没有，调用 HashMap#resize 方法创建 table；         
+- 先检查 table 是否被创建，如果没有，调用 HashMap##resize 方法创建 table；         
 - 通过路由算法得到新 Node 需要插入的位置         
 	- 如果插入位置没有元素，直接插入         
 	- 如果插入位置有元素，利用链地址法解决哈希冲突         
@@ -403,7 +403,7 @@ if (e != null) {
 onlyIfAbsent 如果为 true 的话，不会改变已存在的 value 值；         
 afterNodeAccess 是提供给子类的拓展方法，LinkedHashMap 通过重写这个方法来维护双向链表，替换结束后，将原 value 返回。         
          
-然后来看第二个 if 分支，p instanceof TreeNode 代表此时 Bucket 中存储的是一个红黑树，交给调用 TreeNode#putTreeVal 来处理红黑树的插入；这个放到后面详细讲解；         
+然后来看第二个 if 分支，p instanceof TreeNode 代表此时 Bucket 中存储的是一个红黑树，交给调用 TreeNode##putTreeVal 来处理红黑树的插入；这个放到后面详细讲解；         
          
 最后一个 if 分支，表示插入位置的 Bucket 中存储的首个元素的 key 和 新插入的 key 不同，且 Bucket 存储的是一个链表，此时就需要遍历这个链表来确定 key 是否已经存在：         
 ```java         
@@ -420,7 +420,7 @@ for (int binCount = 0; ; ++binCount) {
 ```         
 在这个 for 循环中，e 存储的是当前节点 p 的下一个节点，在循环中通过 binCount 来统计链表中元素的个数；这个 for 循环有两个出口:         
 - p.next == null，也就是遍历完链表也没有找到相同的 key，此时执行 p.next = newNode(hash, key, value, null); 构造新的节点并插入；         
-	- 此时 binCount 存储的是未插入新元素时链表的元素个数，如果 binCount 超过了 TREEIFY_THRESHOLD - 1，调用 HashMap#treeifyBin 检查是否需要树化；         
+	- 此时 binCount 存储的是未插入新元素时链表的元素个数，如果 binCount 超过了 TREEIFY_THRESHOLD - 1，调用 HashMap##treeifyBin 检查是否需要树化；         
 - e.hash == hash && ((k = e.key) == key || (key != null && key.equals(k)) 也就是找到相同的 key，利用 e 将其保存，之后的操作与第一个 if 分支相同。         
 关于树化的具体操作这里不深入讨论，这里我们看一下树化的条件：         
 ```java         
@@ -434,7 +434,7 @@ final void treeifyBin(Node<K,V>[] tab, int hash) {
 }         
 ```         
 此时已经确定了 hash 对应的位置元素个数大于等于 TREEIFY_THRESHOLD，上面代码中又约束了 tab.length >= MIN_TREEIFY_CAPACITY，这两个条件均满足的时候，执行树化。         
-### resize 方法         
+###### resize 方法         
 这个方法也比较复杂，这里将其拆成两部分来讲解：         
 ```java         
 final Node<K,V>[] resize() {         
@@ -582,8 +582,8 @@ if (hiTail != null) {
 }         
 ```         
 由此我们还可以得出一个结论：旧链表中任何一个位置的元素，其在新 table 中的位置要么与原本位置相同，要么就是原本位置加上老 table 的长度，经过扩容这些元素很大概率是会被分散开的。         
-# HashMap 的线程安全问题         
-## 多线程 put 导致的元素丢失问题         
+## HashMap 的线程安全问题         
+#### 多线程 put 导致的元素丢失问题         
 如果多个线程同时向 HashMap 中添加元素，会导致元素丢失的问题，我们根据源码来分析一下：         
 ```java         
 else {          
@@ -618,7 +618,7 @@ break;
 此时线程 1 插入了 k2，结构如下图所示         
 ![多线程 put 导致的元素丢失问题 2.png|300](多线程put导致的元素丢失问题2.png)        
 但是线程 2 仍然会执行 p.next = newNode(hash, key, value, null); 将 k3 插入，此时 k2 就丢失了，这就是多线程 put 导致的元素丢失问题。         
-## put 和 get 并发的时候可能导致 get 为 null         
+#### put 和 get 并发的时候可能导致 get 为 null         
 线程 1 执行 put 时，因为元素个数超出 threshold 而导致 rehash，线程 2 此时执行 get，有可能导致这个问题。         
 ```java         
 // 第二部分：将原数组中内容复制到拓展后的新数组中         
@@ -644,7 +644,7 @@ return newTab;
 ```         
 我们来看 resize 方法中，将原数组中内容复制到新数组中的方式，是先将 table 设置为 newTab，然后再复制的；         
 此时如果有另一个线程调用 get 方法，而新的数组没有被填充完，那此时这个线程得到的就是值。         
-## JDK7 中并发 put 会造成循环链表         
+#### JDK7 中并发 put 会造成循环链表         
 JDK 7 对 resize 方法在并发条件下，可能会产生循环链表，这个引发的问题是极其致命的，比如会造成 get 方法进入一个死循环，这个问题在 JDK 8 已经得到了解决；         
 我们来看看 JDK7 中的 resize 方法：         
 ```java         
